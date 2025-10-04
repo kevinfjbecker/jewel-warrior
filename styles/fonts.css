@@ -1,0 +1,13 @@
+@font-face {
+    font-family: "Slackey";
+    font-weight: normal;
+    font-style: normal;
+    src: url("../fonts/Slackey/Slackey-Regular.ttf");
+}
+
+@font-face {
+    font-family: 'Geo';
+    font-style: normal;
+    font-weight: normal;
+    src: url("../fonts/Geo/Geo-Regular.ttf");
+}
