@@ -1,1 +1,3 @@
-const jewel = {};
+const jewel = {
+    screens: {}
+};

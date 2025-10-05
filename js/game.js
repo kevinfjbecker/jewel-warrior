@@ -10,6 +10,7 @@ jewel.game = (function () {
             dom.removeClass(activeScreen, 'active');
         }
         dom.addClass(screen, 'active');
+        jewel.screens[screenId].run();
     };
 
     return {

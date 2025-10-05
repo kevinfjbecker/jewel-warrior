@@ -8,17 +8,25 @@ jewel.dom = (function () {
         element.classList.add(className);
     };
 
+    const bind = (element, event, handler) => {
+        if(typeof element === 'string') {
+            element = $(element)[0];
+        }
+        element.addEventListener(event, handler, false);
+    };
+
     const hasClass = (element, className) => {
         return element.classList.constains(className);
     };
 
     const removeClass = (element, className) => {
-        element.classList.remov(className);
+        element.classList.remove(className);
     };
 
     return {
         $,
         addClass,
+        bind,
         hasClass,
         removeClass
     };
