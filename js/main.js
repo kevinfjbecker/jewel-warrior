@@ -15,7 +15,14 @@ jewel.screens['splash-screen'] = (function () {
     }
     return {
         run
-    }
+    };
+})();
+
+jewel.screens['install-screen'] = (function () {
+    function run() { };
+    return {
+        run
+    };
 })();
 
 jewel.game.showScreen('splash-screen');

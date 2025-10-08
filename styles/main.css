@@ -82,3 +82,14 @@ ul.menu li button {
 ul.menu li button:hover {
     background: rgb(30, 40, 0);
 }
+
+/* Install screen for iOS devices */
+#install-screen {
+    padding-top: 0.5em;
+    text-align: center;
+}
+#install-screen span {
+    font-size: 0.75em;
+    display: inline-block;
+    padding: 0 0.5em;
+}
