@@ -13,7 +13,17 @@ jewel.game = (function () {
         jewel.screens[screenId].run();
     };
 
+    function setup() {
+        // disable native touchmove behavior
+        // to prevent overscroll
+        document.addEventListener(
+            'touchmove',
+            (e) => { e.preventDefault(); },
+            { passive: false });
+    }
+
     return {
+        setup,
         showScreen
     };
 
