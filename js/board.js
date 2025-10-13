@@ -101,6 +101,23 @@ jewel.board = (function () {
 
     ///////////////////////////////////////////////////////////////////////////
 
+    function getChains() {
+        let x,
+            y;
+        const chains = [];
+
+        for (y = 0; y < rows; y++) {
+            chains[y] = [];
+            for (x = 0; x < cols; x++) {
+                chains[y][x] = checkChain(x, y);
+            }
+        }
+
+        return chains;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
     function getJewel(x, y) {
         return (jewels[y] && jewels[y][x]) ?? -1;
     }
@@ -147,6 +164,8 @@ jewel.board = (function () {
 
     return {
 
+        mapBoardToChains,
+
         settings,
         jewels,
         cols,
@@ -157,6 +176,7 @@ jewel.board = (function () {
         canSwap,
         checkChain,
         fillBoard,
+        getChains,
         getJewel,
         initialize,
         isAdjacent,
