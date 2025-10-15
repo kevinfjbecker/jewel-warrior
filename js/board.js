@@ -32,6 +32,40 @@ jewel.board = (function () {
 
     ///////////////////////////////////////////////////////////////////////////
 
+    function check() {
+        const
+            chains = getChains(),
+            removed = [],
+            moved = [],
+            gaps = [];
+        let
+            hadChains = false,
+            score = 0;
+        for (let x = 0; x < cols; x++) {
+            gaps[x] = 0;
+            for (let y = rows - 1; y >= 0; y--) {
+                if (chains[y][x] > 2) {
+                    hadChains = true;
+                    gaps[x]++;
+                    removed.push({
+                        x,
+                        y,
+                        type: getJewel(x, y)
+                    });
+                } else if(gaps[x] > 0) {
+                    moved.push({
+                        toX: x,
+                        toY: y,
+                        type: getJewel(x, y)
+                    });
+                    jewels[y + gaps[x]][x] = getJewel(x, y);
+                }
+            }
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
     function checkChain(x, y) {
         const type = getJewel(x, y);
         let left = 0,
@@ -164,8 +198,6 @@ jewel.board = (function () {
 
     return {
 
-        mapBoardToChains,
-
         settings,
         jewels,
         cols,
@@ -174,6 +206,7 @@ jewel.board = (function () {
         numJewelTypes,
 
         canSwap,
+        check,
         checkChain,
         fillBoard,
         getChains,
