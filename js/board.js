@@ -32,7 +32,7 @@ jewel.board = (function () {
 
     ///////////////////////////////////////////////////////////////////////////
 
-    function check() {
+    function check(events) {
         const
             chains = getChains(),
             removed = [],
@@ -53,6 +53,8 @@ jewel.board = (function () {
                         y,
                         type: getJewel(x, y)
                     });
+                    // add points to score
+                    score += baseScore * Math.pow(2, (chains[y][x] - 3))
                 } else if (gaps[x] > 0) {
                     moved.push({
                         fromX: x,
@@ -68,15 +70,31 @@ jewel.board = (function () {
             for (let y = 0; y < gaps[x]; y++) {
                 jewels[y][x] = randomJewel();
                 moved.push({
-                        fromX: x,
-                        fromY: y - gaps[x],
-                        toX: x,
-                        toY: y,
-                        type: getJewel(x, y)
-                    })
+                    fromX: x,
+                    fromY: y - gaps[x],
+                    toX: x,
+                    toY: y,
+                    type: getJewel(x, y)
+                });
             }
         }
-        console.log({removed, moved}) // debug
+        // recurse or return events
+        events = events || [];
+        if (hadChains) {
+            events.push({
+                type: "remove",
+                data: removed
+            }, {
+                type: "score",
+                data: score
+            }, {
+                type: "move",
+                data: moved
+            });
+            return check(events); // check newly created chains
+        } else {
+            return events;
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
