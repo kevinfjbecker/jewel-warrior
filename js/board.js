@@ -24,8 +24,8 @@ jewel.board = (function () {
 
         hasChain = checkChain(x1, y1) > 2 || checkChain(x2, y2) > 2;
 
-        jewels[y1][x1] = type2;
-        jewels[y2][x2] = type1;
+        jewels[y1][x1] = type1;
+        jewels[y2][x2] = type2;
 
         return hasChain;
     }
@@ -43,6 +43,7 @@ jewel.board = (function () {
             score = 0;
         for (let x = 0; x < cols; x++) {
             gaps[x] = 0;
+            // remove and slide down
             for (let y = rows - 1; y >= 0; y--) {
                 if (chains[y][x] > 2) {
                     hadChains = true;
@@ -52,16 +53,30 @@ jewel.board = (function () {
                         y,
                         type: getJewel(x, y)
                     });
-                } else if(gaps[x] > 0) {
+                } else if (gaps[x] > 0) {
                     moved.push({
+                        fromX: x,
+                        fromY: y,
                         toX: x,
-                        toY: y,
+                        toY: y + gaps[x],
                         type: getJewel(x, y)
                     });
                     jewels[y + gaps[x]][x] = getJewel(x, y);
                 }
             }
+            // fill from top
+            for (let y = 0; y < gaps[x]; y++) {
+                jewels[y][x] = randomJewel();
+                moved.push({
+                        fromX: x,
+                        fromY: y - gaps[x],
+                        toX: x,
+                        toY: y,
+                        type: getJewel(x, y)
+                    })
+            }
         }
+        console.log({removed, moved}) // debug
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -196,14 +211,31 @@ jewel.board = (function () {
 
     ///////////////////////////////////////////////////////////////////////////
 
-    return {
+    function swap(x1, y1, x2, y2/*, callback*/) {
 
-        settings,
-        jewels,
-        cols,
-        rows,
-        baseScore,
-        numJewelTypes,
+        let tmp,
+            events;
+
+        if (canSwap(x1, y1, x2, y2)) {
+
+            tmp = getJewel(x1, y1);
+            jewels[y1][x1] = getJewel(x2, y2);
+            jewels[y2][x2] = tmp;
+
+            // events = check(); // todo: add this back in
+            // callback(events); // todo: add this back in
+
+        } else {
+
+            // callback(false); // todo: add this back in
+
+        }
+
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    return {
 
         canSwap,
         check,
@@ -214,7 +246,8 @@ jewel.board = (function () {
         initialize,
         isAdjacent,
         print,
-        randomJewel
+        randomJewel,
+        swap,
 
     };
 
