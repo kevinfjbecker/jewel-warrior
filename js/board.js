@@ -10,6 +10,17 @@ jewel.board = (function () {
 
     ///////////////////////////////////////////////////////////////////////////
 
+    function canJewelMove(x, y) {
+        return (
+            (x > 0 && canSwap(x, y, x - 1, y)) ||
+            (x < cols - 1 && canSwap(x, y, x + 1, y)) ||
+            (y > 0 && canSwap(x, y, x, y - 1)) ||
+            (y < rows - 1 && canSwap(x, y, x, y + 1))
+        )
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
     function canSwap(x1, y1, x2, y2) {
         const type1 = getJewel(x1, y1);
         const type2 = getJewel(x2, y2);
@@ -164,6 +175,16 @@ jewel.board = (function () {
                 jewels[y][x] = type;
             }
         }
+        // recursive fill if the board has no moves
+        if(!hasMoves()) {
+            fillBoard();
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    function getBoard() {
+        return structuredClone(jewels);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -191,7 +212,19 @@ jewel.board = (function () {
 
     ///////////////////////////////////////////////////////////////////////////
 
-    function initialize(/*callback*/) {
+    function hasMoves() {
+        for (let x = 0; x < cols; x++) {
+            for (let y = 0; y < rows; y++) {
+                if (canJewelMove(x, y)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    ///////////////////////////////////////////////////////////////////////////
+
+    function initialize(callback) {
         settings = jewel.settings;
         cols = settings.cols;
         rows = settings.rows;
@@ -199,7 +232,7 @@ jewel.board = (function () {
         numJewelTypes = settings.numJewelTypes;
 
         fillBoard();
-        // callback();
+        callback();
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -229,7 +262,7 @@ jewel.board = (function () {
 
     ///////////////////////////////////////////////////////////////////////////
 
-    function swap(x1, y1, x2, y2/*, callback*/) {
+    function swap(x1, y1, x2, y2, callback) {
 
         let tmp,
             events;
@@ -240,12 +273,12 @@ jewel.board = (function () {
             jewels[y1][x1] = getJewel(x2, y2);
             jewels[y2][x2] = tmp;
 
-            // events = check(); // todo: add this back in
-            // callback(events); // todo: add this back in
+            events = check();
+            callback(events);
 
         } else {
 
-            // callback(false); // todo: add this back in
+            callback(false);
 
         }
 
@@ -255,16 +288,19 @@ jewel.board = (function () {
 
     return {
 
+        // canJewelMove, // debug
         canSwap,
-        check,
-        checkChain,
-        fillBoard,
-        getChains,
-        getJewel,
+        // check, // debug
+        // checkChain, // debug
+        // fillBoard, // debug
+        getBoard,
+        // getChains, // debug
+        // getJewel, // debug
+        // hasMoves, // debug
         initialize,
-        isAdjacent,
+        // isAdjacent, // debug
         print,
-        randomJewel,
+        // randomJewel, // debug
         swap,
 
     };
