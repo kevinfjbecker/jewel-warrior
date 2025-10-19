@@ -1,9 +1,16 @@
 const jewel = {
     screens: {},
     settings: {
-        rows: 8,
-        cols: 8,
         baseScore: 100,
-        numJewelTypes: 7
+        cols: 8,
+        jewelSize: null,
+        numJewelTypes: 7,
+        rows: 8,
     }
 };
+
+window.addEventListener('load', function () {
+    const jewelProto = this.document.getElementById('jewel-proto');
+    const rect = jewelProto.getBoundingClientRect();
+    jewel.settings.jewelSize = rect.width;
+});
