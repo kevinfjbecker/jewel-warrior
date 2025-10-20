@@ -7,5 +7,5 @@ jewel.game.setup();
 // if (testStandAlone()) {
     jewel.game.showScreen('splash-screen');
 // } else {
-//   jewel.game.showScreen('install-screen');
+//     jewel.game.showScreen('install-screen'); // install can't be required
 // }
