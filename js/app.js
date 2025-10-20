@@ -13,4 +13,7 @@ window.addEventListener('load', function () {
     const jewelProto = this.document.getElementById('jewel-proto');
     const rect = jewelProto.getBoundingClientRect();
     jewel.settings.jewelSize = rect.width;
+
+    jewel.game.showScreen('game-screen'); // todo: remove this
+
 });

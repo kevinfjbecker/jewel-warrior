@@ -1,3 +1,19 @@
+
+jewel.screens['game-screen'] = (function () {
+    const board = jewel.board;
+    const display = jewel.display;
+    function run() {
+        board.initialize(function () {
+            display.initialize(function () {
+                board.print(); // todo: start the game
+            });
+        });
+    }
+    return {
+        run
+    };
+})();
+
 jewel.screens['install-screen'] = (function () {
     function run() { };
     return {
