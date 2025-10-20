@@ -125,3 +125,17 @@ ul.menu li button:hover {
     display: inline-block;
     padding: 0 0.5em;
 }
+
+#game-screen .game-board .board-bg,
+#game-screen .game-board .board {
+    position: absolute;
+    width: 100%;
+}
+
+#game-screen .game-board .board {
+    z-index: 10;
+}
+
+#game-screen .game-board .board-bg {
+    z-index: 0;
+}
