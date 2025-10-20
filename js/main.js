@@ -4,8 +4,8 @@ function testStandAlone() {
 
 jewel.game.setup();
 
-if (testStandAlone()) {
+// if (testStandAlone()) {
     jewel.game.showScreen('splash-screen');
-} else {
-    jewel.game.showScreen('install-screen');
-}
+// } else {
+//   jewel.game.showScreen('install-screen');
+// }
