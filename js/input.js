@@ -7,7 +7,8 @@ jewel.input = (function () {
         38: 'KEY_UP',
         39: 'KEY_RIGHT',
         40: 'KEY_DOWN',
-        // todo: more keys
+        13: 'KEY_ENTER',
+        32: 'KEY_SPACE',
     };
     let inputHandlers;
 
@@ -39,8 +40,8 @@ jewel.input = (function () {
         dom.bind(board, 'touchstart', function (event) {
             handleClick(event, 'TOUCH', event.targetTouches[0]);
         });
-        dom.bind(board, 'keydown', function (event) {
-            bedugger;
+
+        dom.bind(document, 'keydown', function (event) {
             var keyName = keys[event.keyCode]
             if(keyName && settings.controls[keyName]) {
                 event.preventDefault();

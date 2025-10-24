@@ -1,16 +1,56 @@
 
 jewel.screens['game-screen'] = (function () {
+
     const board = jewel.board;
     const display = jewel.display;
+    let cursor;
+
     function run() {
         board.initialize(function () {
             display.initialize(function () {
+                cursor = {
+                    x: 0,
+                    y: 0,
+                    selected: false
+                };
                 display.redraw(jewel.board.getBoard(), function () {
                     // board.print(); // todo: start the game
                 });
             });
         });
     }
+
+    function selectJewel(x, y) {
+        if (arguments.length === 0) {
+            selectJewel(cursor.x, cursor.y);
+            return;
+        }
+        if (cursor.selected) {
+            const dx = Math.abs(x - cursor.x);
+            const dy = Math.abs(y - cursor.y);
+            dist = dx + dy;
+            if (dist === 0) {
+                // deselected the selected jewel
+                setCursor(x, y, false);
+            } else if (dist === 1) {
+                // selected an adjacent jewel
+                board.swap(cursor.x, cursor.y, x, y, playBoardEvents);
+                setCursor(x, y, false);
+            } else {
+                // selected a different jewel
+                setCursor(x, y, true);
+            }
+        } else {
+            setCursor(x, y, true);
+        }
+    }
+
+    function setCursor(x, y, select) {
+        cursor.x = x;
+        cursor.y = y;
+        cursor.select = select;
+    }
+
     return {
         run
     };
