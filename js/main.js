@@ -9,3 +9,5 @@ jewel.game.setup();
 // } else {
 //     jewel.game.showScreen('install-screen'); // install can't be required
 // }
+
+jewel.input.initialize(); // todo: probably move this.
