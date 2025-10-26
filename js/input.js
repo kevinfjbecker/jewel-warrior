@@ -13,15 +13,18 @@ jewel.input = (function () {
     let inputHandlers;
 
     function bind(action, handler) {
-
+        if (!inputHandlers[action]) {
+            inputHandlers[action] = [];
+        }
+        inputHandlers[action].push(handler);
     }
 
     function handleClick(event, control, click) {
-        var action = settings.controls[control];
-        if(!action) {
+        const action = settings.controls[control];
+        if (!action) {
             return;
         }
-        const board = $('#game-screen .game-board')[0];
+        const board = $('#game-screen .board')[0];
         const rect = board.getBoundingClientRect();
         const relX = click.clientX - rect.left;
         const relY = click.clientY - rect.top;
@@ -43,7 +46,7 @@ jewel.input = (function () {
 
         dom.bind(document, 'keydown', function (event) {
             var keyName = keys[event.keyCode]
-            if(keyName && settings.controls[keyName]) {
+            if (keyName && settings.controls[keyName]) {
                 event.preventDefault();
                 trigger(settings.controls[keyName]);
             }
@@ -51,10 +54,17 @@ jewel.input = (function () {
     }
 
     function trigger(action) {
-        console.log(action);
+        const handlers = inputHandlers[action];
+        const args = Array.prototype.slice.call(arguments, 1);
+        if (handlers) {
+            for (let i = 0; i < handlers.length; i++) {
+                handlers[i].apply(null, args);
+            }
+        }
     }
 
     return {
+        bind,
         initialize
     };
 
