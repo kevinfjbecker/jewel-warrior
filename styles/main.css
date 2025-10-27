@@ -130,6 +130,7 @@ ul.menu li button:hover {
 #game-screen .game-board .board {
     position: absolute;
     width: 100%;
+    perspective: 16em;
 }
 
 #game-screen .game-board .board {

@@ -149,6 +149,30 @@ jewel.display = (function () {
         callback();
     }
 
+    function refill(newJewels, callback) {
+        let lastJewel = 0;
+        addAnimation(1000, {
+            render: function (pos) {
+                const thisJewel = Math.floor(pos * cols * rows);
+                let i,
+                    x,
+                    y;
+                for (i = lastJewel; i < thisJewel; i++) {
+                    x = i % cols;
+                    y = Math.floor(i / cols);
+                    clearJewel(x, y);
+                    drawJewel(newJewels[y][x], x, y);
+                }
+                lastJewel = thisJewel;
+                canvas.style.transform = `rotateX(${360 * pos}deg)`;
+            },
+            done: function(){
+                canvas.style.transform = '';
+                callback();
+            }
+        })
+    }
+
     function removeJewels(removedJewels, callback) {
         let n = removedJewels.length;
         removedJewels.forEach(function (e) {
@@ -267,6 +291,7 @@ jewel.display = (function () {
         initialize,
         moveJewels,
         redraw,
+        refill,
         removeJewels,
         setCursor
     };
