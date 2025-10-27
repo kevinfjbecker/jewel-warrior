@@ -67,8 +67,21 @@ jewel.display = (function () {
         requestAnimationFrame(cycle);
     }
 
-    function drawJewel(type, x, y) {
+    function drawJewel(type, x, y, scale, rot) {
         const image = jewel.images[`images/jewels${jewelSize}.png`];
+        ctx.save();
+        if (typeof scale !== 'undefined' && scale > 0) {
+            ctx.beginPath();
+            ctx.rect(x, y, 1, 1);
+            ctx.clip();
+            ctx.translate(x + 0.5, y + 0.5);
+            ctx.scale(scale, scale);
+            if (rot) {
+                ctx.rotate(rot);
+            }
+            ctx.translate(-x - 0.5, -y - 0.5);
+
+        }
         ctx.drawImage(
             image,
             type * jewelSize,
@@ -80,6 +93,7 @@ jewel.display = (function () {
             1,
             1
         );
+        ctx.restore();
     }
 
     function initialize(callback) {
@@ -136,18 +150,32 @@ jewel.display = (function () {
     }
 
     function removeJewels(removedJewels, callback) {
-        const n = removedJewels.length;
-        for (let i = 0; i < n; i++) {
-            clearJewel(removedJewels[i].x, removedJewels[i].y);
-        }
-        callback();
+        let n = removedJewels.length;
+        removedJewels.forEach(function (e) {
+            addAnimation(400, {
+                before: function () {
+                    clearJewel(e.x, e.y);
+                },
+                render: function (pos) {
+                    ctx.save();
+                    ctx.globalAlpha = 1 - pos;
+                    drawJewel(e.type, e.x, e.y, 1 - pos, pos * Math.PI * 2);
+                    ctx.restore();
+                },
+                done: function () {
+                    if (--n == 0) {
+                        callback();
+                    }
+                }
+            })
+        });
     }
 
     function renderAnimations(time, lastTime) {
 
         const anims = animations.slice(0);
         const n = anims.length;
-        
+
         let animTime,
             anim,
             i;
