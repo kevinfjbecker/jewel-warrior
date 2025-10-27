@@ -4,13 +4,14 @@ jewel.display = (function () {
     const $ = dom.$;
 
     let canvas,
+        cols,
         ctx,
         cursor,
-        cols,
-        rows,
+        firstRun = true,
         jewels = [],
         jewelSize,
-        firstRun = true;
+        previousCycle,
+        rows;
 
     function clearCursor() {
         if (cursor) {
@@ -46,8 +47,16 @@ jewel.display = (function () {
         return background;
     }
 
+    function cycle(time) {
+        previousCycle = time;
+
+        renderCursor(time);
+
+        requestAnimationFrame(cycle);
+    }
+
     function drawJewel(type, x, y) {
-        const image = jewel.images['images/jewels' + jewelSize + '.png'];
+        const image = jewel.images[`images/jewels${jewelSize}.png`];
         ctx.drawImage(
             image,
             type * jewelSize,
@@ -92,7 +101,7 @@ jewel.display = (function () {
                 drawJewel(jewels[y][x], x, y);
             }
         }
-        renderCursor();
+        // renderCursor();
         callback();
     }
 
@@ -104,29 +113,30 @@ jewel.display = (function () {
         callback();
     }
 
-    function renderCursor() {
+    function renderCursor(time) {
         if (!cursor) {
             return;
         }
+
         const x = cursor.x;
         const y = cursor.y;
+        const t1 = (Math.sin(time / 200) + 1) / 2;
+        const t2 = (Math.sin(time / 400) + 1) / 2;
+
         clearCursor();
+
         if (cursor.selected) {
             ctx.save();
             ctx.globalCompositeOperation = 'lighter';
-            ctx.globalAlpha = 0.5; // 0.8 in book
+            ctx.globalAlpha = 0.8 * t1;
             drawJewel(jewels[y][x], x, y);
             ctx.restore();
         }
+
         ctx.save();
         ctx.lineWidth = 0.05;
-        ctx.strokeStyle = 'rgba(250, 250, 150, 0.8)';
-        ctx.strokeRect(
-            (x + 0.05),
-            (y + 0.05),
-            0.9,
-            0.9
-        );
+        ctx.strokeStyle = `rgba(250, 250, 150, ${0.5 + 0.5 * t2}`;
+        ctx.strokeRect(x + 0.05, y + 0.05, 0.9, 0.9);
         ctx.restore();
     }
 
@@ -137,8 +147,6 @@ jewel.display = (function () {
         } else {
             cursor = null;
         }
-        renderCursor();
-        ctx.restore();
     }
 
     function setup() {
@@ -158,6 +166,9 @@ jewel.display = (function () {
 
         boardElement.appendChild(createBackground());
         boardElement.appendChild(canvas);
+
+        previousCycle = Date.now();
+        requestAnimationFrame(cycle);
     }
 
     return {
