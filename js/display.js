@@ -22,28 +22,27 @@ jewel.display = (function () {
     }
 
     function clearJewel(x, y) {
-        ctx.clearRect(x * jewelSize, y * jewelSize, jewelSize, jewelSize);
+        ctx.clearRect(x, y, 1, 1);
     }
 
     function createBackground() {
         const background = document.createElement('canvas');
-        const bgctx = background.getContext('2d');
-        dom.addClass(background, 'board-bg');
         background.width = cols * jewelSize;
         background.height = rows * jewelSize;
+        dom.addClass(background, 'board-bg');
+
+        const bgctx = background.getContext('2d');
         bgctx.fillStyle = 'rgba(225, 235, 255, 0.15)';
+        bgctx.scale(jewelSize, jewelSize);
+
         for (let x = 0; x < cols; x++) {
             for (let y = 0; y < rows; y++) {
                 if ((x + y) % 2) {
-                    bgctx.fillRect(
-                        x * jewelSize,
-                        y * jewelSize,
-                        jewelSize,
-                        jewelSize
-                    );
+                    bgctx.fillRect(x, y, 1, 1);
                 }
             }
         }
+
         return background;
     }
 
@@ -55,10 +54,10 @@ jewel.display = (function () {
             0,
             jewelSize,
             jewelSize,
-            x * jewelSize,
-            y * jewelSize,
-            jewelSize,
-            jewelSize
+            x,
+            y,
+            1,
+            1
         );
     }
 
@@ -120,13 +119,13 @@ jewel.display = (function () {
             ctx.restore();
         }
         ctx.save();
-        ctx.lineWidth = 0.05 * jewelSize;
+        ctx.lineWidth = 0.05;
         ctx.strokeStyle = 'rgba(250, 250, 150, 0.8)';
         ctx.strokeRect(
-            (x + 0.05) * jewelSize,
-            (y + 0.05) * jewelSize,
-            0.9 * jewelSize,
-            0.9 * jewelSize
+            (x + 0.05),
+            (y + 0.05),
+            0.9,
+            0.9
         );
         ctx.restore();
     }
@@ -144,14 +143,19 @@ jewel.display = (function () {
 
     function setup() {
         const boardElement = $('#game-screen .game-board')[0];
+
         cols = jewel.settings.cols;
         rows = jewel.settings.rows;
         jewelSize = jewel.settings.jewelSize;
+
         canvas = document.createElement('canvas');
-        ctx = canvas.getContext('2d');
-        dom.addClass(canvas, 'board');
         canvas.width = cols * jewelSize;
         canvas.height = rows * jewelSize;
+        dom.addClass(canvas, 'board');
+
+        ctx = canvas.getContext('2d');
+        ctx.scale(jewelSize, jewelSize);
+
         boardElement.appendChild(createBackground());
         boardElement.appendChild(canvas);
     }
