@@ -40,6 +40,7 @@ jewel.screens['game-screen'] = (function () {
     }
 
     function playBoardEvents(events) {
+
         if (events.length > 0) {
             const boardEvent = events.shift();
             const next = function () {
@@ -96,7 +97,6 @@ jewel.screens['game-screen'] = (function () {
             const dy = Math.abs(y - cursor.y);
             dist = dx + dy;
             if (dist === 0) {
-                // todo: debug me!
                 // deselected the selected jewel
                 setCursor(x, y, false);
             } else if (dist === 1) {

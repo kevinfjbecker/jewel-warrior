@@ -44,6 +44,7 @@ jewel.board = (function () {
     ///////////////////////////////////////////////////////////////////////////
 
     function check(events) {
+
         const
             chains = getChains(),
             removed = [],
@@ -176,7 +177,7 @@ jewel.board = (function () {
             }
         }
         // recursive fill if the board has no moves
-        if(!hasMoves()) {
+        if (!hasMoves()) {
             fillBoard();
         }
     }
@@ -264,22 +265,72 @@ jewel.board = (function () {
 
     function swap(x1, y1, x2, y2, callback) {
 
-        let tmp,
-            events;
+        let events = [],
+            tmp,
+            swap1,
+            swap2;
 
-        if (canSwap(x1, y1, x2, y2)) {
+        swap1 = {
+            type: 'move',
+            data: [
+                {
+                    type: getJewel(x1, y1),
+                    fromX: x1,
+                    fromY: y1,
+                    toX: x2,
+                    toY: y2
+                },
+                {
+                    type: getJewel(x2, y2),
+                    fromX: x2,
+                    fromY: y2,
+                    toX: x1,
+                    toY: y1
+                }
+            ]
+        };
 
-            tmp = getJewel(x1, y1);
-            jewels[y1][x1] = getJewel(x2, y2);
-            jewels[y2][x2] = tmp;
+        swap2 = {
+            type: 'move',
+            data: [
+                {
+                    type: getJewel(x2, y2),
+                    fromX: x1,
+                    fromY: y1,
+                    toX: x2,
+                    toY: y2
+                },
+                {
+                    type: getJewel(x1, y1),
+                    fromX: x2,
+                    fromY: y2,
+                    toX: x1,
+                    toY: y1
+                }
+            ]
+        };
 
-            events = check();
+        if (isAdjacent(x1, y1, x2, y2)) {
+
+            events.push(swap1);
+
+            if (canSwap(x1, y1, x2, y2)) {
+
+                tmp = getJewel(x1, y1);
+                jewels[y1][x1] = getJewel(x2, y2);
+                jewels[y2][x2] = tmp;
+
+                const reactionEvents = check();
+
+                events = events.concat(reactionEvents);
+
+            } else {
+
+                events.push(swap2, { type: 'badswap' });
+
+            }
+
             callback(events);
-
-        } else {
-
-            callback(false);
-
         }
 
     }
@@ -287,22 +338,11 @@ jewel.board = (function () {
     ///////////////////////////////////////////////////////////////////////////
 
     return {
-
-        // canJewelMove, // debug
         canSwap,
-        // check, // debug
-        // checkChain, // debug
-        // fillBoard, // debug
         getBoard,
-        // getChains, // debug
-        // getJewel, // debug
-        // hasMoves, // debug
         initialize,
-        // isAdjacent, // debug
         print,
-        // randomJewel, // debug
         swap,
-
     };
 
 })();

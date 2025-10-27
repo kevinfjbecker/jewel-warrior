@@ -18,7 +18,6 @@ jewel.screens['main-menu'] = (function () {
     };
     function setup() {
         dom.bind('#main-menu', 'click', function (e) {
-            // console.log(e.target.name) // debug
             switch (e.target.name) {
                 case 'game-screen':
                     game.showScreen('game-screen');

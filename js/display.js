@@ -3,7 +3,8 @@ jewel.display = (function () {
     const dom = jewel.dom;
     const $ = dom.$;
 
-    let canvas,
+    let animations = [],
+        canvas,
         cols,
         ctx,
         cursor,
@@ -12,6 +13,15 @@ jewel.display = (function () {
         jewelSize,
         previousCycle,
         rows;
+
+    function addAnimation(runTime, fncs) {
+        animations.push({
+            runTime,
+            startTime: performance.now(),
+            pos: 0,
+            fncs
+        });
+    }
 
     function clearCursor() {
         if (cursor) {
@@ -48,9 +58,11 @@ jewel.display = (function () {
     }
 
     function cycle(time) {
-        previousCycle = time;
 
         renderCursor(time);
+        renderAnimations(time, previousCycle)
+
+        previousCycle = time;
 
         requestAnimationFrame(cycle);
     }
@@ -79,18 +91,37 @@ jewel.display = (function () {
     }
 
     function moveJewels(movedJewels, callback) {
-        const n = movedJewels.length;
-        let mover;
-        let i;
-        for (i = 0; i < n; i++) {
-            mover = movedJewels[i];
-            clearJewel(mover.fromX, mover.fromY);
-        }
-        for (i = 0; i < n; i++) {
-            mover = movedJewels[i];
-            drawJewel(mover.type, mover.toX, mover.toY);
-        }
-        callback();
+
+        const oldCursor = cursor;
+
+        let n = movedJewels.length;
+
+        cursor = null;
+
+        movedJewels.forEach(function (e) {
+            const x = e.fromX;
+            const y = e.fromY;
+            const dx = e.toX - x;
+            const dy = e.toY - y;
+            const dist = Math.abs(dx) + Math.abs(dy);
+
+            addAnimation(200 * dist, {
+                before: function (pos) {
+                    pos = Math.sin(pos * Math.PI / 2);
+                    clearJewel(x + dx * pos, y + dy * pos);
+                },
+                render: function (pos) {
+                    pos = Math.sin(pos * Math.PI / 2);
+                    drawJewel(e.type, x + dx * pos, y + dy * pos);
+                },
+                done: function (pos) {
+                    if (--n == 0) {
+                        cursor = oldCursor;
+                        callback();
+                    }
+                }
+            });
+        });
     }
 
     function redraw(newJewels, callback) {
@@ -101,7 +132,6 @@ jewel.display = (function () {
                 drawJewel(jewels[y][x], x, y);
             }
         }
-        // renderCursor();
         callback();
     }
 
@@ -111,6 +141,40 @@ jewel.display = (function () {
             clearJewel(removedJewels[i].x, removedJewels[i].y);
         }
         callback();
+    }
+
+    function renderAnimations(time, lastTime) {
+
+        const anims = animations.slice(0);
+        const n = anims.length;
+        
+        let animTime,
+            anim,
+            i;
+
+        // call before() function
+        for (i = 0; i < n; i++) {
+            anim = anims[i];
+            if (anim.fncs.before) {
+                anim.fncs.before(anim.pos);
+            }
+            anim.lastPos = anim.pos;
+            animTime = (lastTime - anim.startTime);
+            anim.pos = animTime / anim.runTime;
+            anim.pos = Math.max(0, Math.min(1, anim.pos));
+        }
+        animations = [];
+        for (i = 0; i < n; i++) {
+            anim = anims[i];
+            anim.fncs.render(anim.pos, anim.pos - anim.lastPos);
+            if (anim.pos == 1) {
+                if (anim.fncs.done) {
+                    anim.fncs.done();
+                }
+            } else {
+                animations.push(anim);
+            }
+        }
     }
 
     function renderCursor(time) {
@@ -167,7 +231,7 @@ jewel.display = (function () {
         boardElement.appendChild(createBackground());
         boardElement.appendChild(canvas);
 
-        previousCycle = Date.now();
+        previousCycle = performance.now();
         requestAnimationFrame(cycle);
     }
 

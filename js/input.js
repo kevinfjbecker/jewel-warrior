@@ -35,11 +35,14 @@ jewel.input = (function () {
     }
 
     function initialize() {
+
         inputHandlers = {};
         const board = $('#game-screen .game-board')[0];
+        
         dom.bind(board, 'mousedown', function (event) {
             handleClick(event, 'CLICK', event);
         });
+        
         dom.bind(board, 'touchstart', function (event) {
             handleClick(event, 'TOUCH', event.targetTouches[0]);
         });
